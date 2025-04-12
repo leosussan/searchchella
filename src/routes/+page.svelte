@@ -19,6 +19,9 @@
   let stages = [];
   /** @type {typeof scheduleData} */
   let filteredPerformances = [];
+  let searchTerm = '';
+  /** @type {typeof scheduleData} */
+  let chronologicalPerformances = [];
 
   const festivalTimeZone = 'America/Los_Angeles'; // Coachella timezone
   let selectedTimezone = ''; // Will be set to user's timezone in onMount
@@ -141,6 +144,28 @@
         return selectedTime >= startMinutes && selectedTime < endMinutes;
     });
   }
+
+  // Sort all performances chronologically across all days
+  $: {
+    chronologicalPerformances = [...schedule].sort((a, b) => {
+      // First sort by day
+      const dayOrder = { 'Friday': 0, 'Saturday': 1, 'Sunday': 2 };
+      if (dayOrder[a.day] !== dayOrder[b.day]) {
+        return dayOrder[a.day] - dayOrder[b.day];
+      }
+      
+      // Then sort by start time
+      return timeToMinutes(a.start) - timeToMinutes(b.start);
+    });
+  }
+
+  // Filter performances based on search term
+  $: filteredChronologicalPerformances = chronologicalPerformances.filter(performance => {
+    if (!searchTerm.trim()) return true;
+    
+    // Case-insensitive search in artist name
+    return performance.artist.toLowerCase().includes(searchTerm.toLowerCase());
+  });
 
   // --- Initialization ---
 
@@ -362,6 +387,56 @@
     {:else}
        <!-- This case might not be reached if stages always has items for a selected day -->
       <p>No stages found for {selectedDay}.</p>
+    {/if}
+  </div>
+
+  <div class="acts-list-container">
+    <h2>All Performances</h2>
+    
+    <div class="search-container">
+      <input 
+        type="text" 
+        bind:value={searchTerm} 
+        placeholder="Search for an artist..." 
+        aria-label="Search for an artist"
+      />
+      {#if searchTerm.trim()}
+        <button class="clear-search" on:click={() => searchTerm = ''} aria-label="Clear search">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      {/if}
+    </div>
+    
+    {#if filteredChronologicalPerformances.length === 0}
+      <p class="no-results">No performances found matching "{searchTerm}"</p>
+    {:else}
+      <div class="acts-list">
+        {#each filteredChronologicalPerformances as performance}
+          {@const liveLink = getLivestreamLink(performance.stage)}
+          <div class="act-item" data-stage={performance.stage}>
+            <div class="act-day-time">
+              <span class="act-day">{performance.day}</span>
+              <span class="act-time">{formatPerformanceTime(performance.start)} - {formatPerformanceTime(performance.end)}</span>
+            </div>
+            <div class="act-details">
+              <span class="act-artist">{performance.artist}</span>
+              <span class="act-stage">
+                {performance.stage}
+                {#if liveLink}
+                  <a href="https://www.youtube.com/watch?v={liveLink}" target="_blank" title="Watch Livestream for {performance.stage} on {performance.day}" class="livestream-link" aria-label="Watch Livestream for {performance.stage} on {performance.day}">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+                      <path fill-rule="evenodd" d="M4.5 5.653c0-1.427 1.529-2.33 2.779-1.643l11.54 6.347c1.295.712 1.295 2.573 0 3.286L7.28 19.99c-1.25.687-2.779-.217-2.779-1.643V5.653Z" clip-rule="evenodd" />
+                    </svg>
+                  </a>
+                {/if}
+              </span>
+            </div>
+          </div>
+        {/each}
+      </div>
     {/if}
   </div>
 
@@ -736,6 +811,173 @@
     
     h1 {
       font-size: 1.8rem;
+    }
+  }
+
+  /* Acts List Styles */
+  .acts-list-container {
+    margin-top: 3rem;
+    background-color: var(--card-background);
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+  }
+
+  .search-container {
+    position: relative;
+    margin-bottom: 1.5rem;
+  }
+
+  .search-container input {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: 1px solid var(--secondary-background);
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    background-color: var(--card-background);
+    color: var(--text-color);
+    transition: var(--transition);
+  }
+
+  .search-container input:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(58, 134, 255, 0.2);
+  }
+
+  .clear-search {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--text-color);
+    cursor: pointer;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.6;
+    transition: var(--transition);
+  }
+
+  .clear-search:hover {
+    opacity: 1;
+  }
+
+  .no-results {
+    text-align: center;
+    padding: 2rem;
+    color: var(--text-color);
+    opacity: 0.7;
+  }
+
+  .acts-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+
+  .act-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background-color: var(--secondary-background);
+    border-radius: var(--border-radius);
+    transition: var(--transition);
+    border-left: 4px solid #ccc; /* Default border color */
+  }
+
+  /* Stage-specific styling for act items */
+  .act-item[data-stage="Coachella Stage"] {
+    border-left-color: var(--stage-coachella);
+  }
+
+  .act-item[data-stage="Outdoor Theatre"] {
+    border-left-color: var(--stage-outdoor);
+  }
+
+  .act-item[data-stage="Sahara"] {
+    border-left-color: var(--stage-sahara);
+  }
+
+  .act-item[data-stage="Mojave"] {
+    border-left-color: var(--stage-mojave);
+  }
+
+  .act-item[data-stage="Gobi"] {
+    border-left-color: var(--stage-gobi);
+  }
+
+  .act-item[data-stage="Sonora"] {
+    border-left-color: var(--stage-sonora);
+  }
+
+  .act-item[data-stage="Yuma"] {
+    border-left-color: var(--stage-yuma);
+  }
+
+  .act-item[data-stage="Quasar"] {
+    border-left-color: var(--stage-quasar);
+  }
+
+  .act-item:hover {
+    transform: translateX(3px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .act-day-time {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .act-day {
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: var(--primary-color);
+  }
+
+  .act-time {
+    font-size: 0.85rem;
+    color: var(--text-color);
+    opacity: 0.8;
+  }
+
+  .act-details {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.3rem;
+  }
+
+  .act-artist {
+    font-weight: 600;
+    font-size: 1.05rem;
+    color: var(--text-color);
+  }
+
+  .act-stage {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.9rem;
+    opacity: 0.8;
+  }
+
+  /* Responsive adjustments for acts list */
+  @media (max-width: 768px) {
+    .act-item {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.8rem;
+    }
+    
+    .act-details {
+      align-items: flex-start;
+      width: 100%;
     }
   }
 </style>
