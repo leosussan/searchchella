@@ -390,7 +390,7 @@
   }
 
   /* Dark mode variables */
-  html[data-theme="dark"] {
+  :root[data-theme="dark"] {
     --primary-color: #4d8eff;
     --primary-light: #75adff;
     --primary-dark: #3a6bc7;
@@ -557,10 +557,11 @@
   select {
     width: 100%;
     padding: 0.6rem 0.8rem;
-    border: 1px solid #ddd;
+    border: 1px solid var(--secondary-background);
     border-radius: var(--border-radius);
     font-size: 1rem;
-    background-color: white;
+    background-color: var(--card-background);
+    color: var(--text-color);
     transition: var(--transition);
     cursor: pointer;
   }
