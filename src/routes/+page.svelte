@@ -222,6 +222,13 @@
       return undefined; // No link found
   }
 
+  /**
+   * Resets the time slider to the default value (3:00 PM Pacific)
+   */
+  function resetTimeToDefault() {
+    selectedTime = 15 * 60; // Reset to 3:00 PM Pacific (default)
+  }
+
 </script>
 
 <svelte:head>
@@ -254,15 +261,18 @@
     <div class="time-selector">
        <!-- Display time in selected timezone -->
       <label for="time">Time: {formatSliderTime(selectedTime)}</label>
-      <!-- Time slider from 12 PM (720 min) to 2:00 AM (1560 min -> 26 * 60) festival time -->
-      <input
-        type="range"
-        id="time"
-        bind:value={selectedTime}
-        min={720}
-        max={1560}
-        step={5}
-      />
+      <div class="time-controls">
+        <!-- Time slider from 12 PM (720 min) to 2:00 AM (1560 min -> 26 * 60) festival time -->
+        <input
+          type="range"
+          id="time"
+          bind:value={selectedTime}
+          min={720}
+          max={1560}
+          step={5}
+        />
+        <button class="reset-button" on:click={resetTimeToDefault}>Reset Time</button>
+      </div>
     </div>
   </div>
 
@@ -320,9 +330,30 @@
   .time-selector {
     /* flex-grow: 1; */ /* No longer needed with grid */
   }
-  .time-selector input[type="range"] {
+  .time-controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
     width: 100%;
-    margin-top: 0.5rem; /* Add some space above slider */
+    margin-top: 0.5rem;
+  }
+
+  .time-controls input[type="range"] {
+    flex-grow: 1;
+  }
+
+  .reset-button {
+    padding: 0.3rem 0.6rem;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    white-space: nowrap;
+  }
+
+  .reset-button:hover {
+    background-color: #e0e0e0;
   }
   .schedule-grid ul {
     list-style: none;
