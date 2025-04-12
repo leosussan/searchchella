@@ -25,6 +25,7 @@
   let searchTerm = '';
   /** @type {typeof scheduleData} */
   let chronologicalPerformances = [];
+  let hideEmptyStages = false; // Default to showing all stages
 
   const festivalTimeZone = 'America/Los_Angeles'; // Coachella timezone
   let selectedTimezone = ''; // Will be set to user's timezone in onMount
@@ -133,10 +134,9 @@
   $: {
     // Get all unique stages for the selected day first
     const stagesForDay = [...new Set(schedule.filter(p => p.day === selectedDay).map(p => p.stage))].sort();
-    stages = stagesForDay; // Update the stages list
-
+    
     // Filter performances happening at the selected time
-    filteredPerformances = schedule.filter(p => {
+    const performancesAtTime = schedule.filter(p => {
         if (p.day !== selectedDay) return false; // Ensure correct day
 
         const startMinutes = timeToMinutes(p.start);
@@ -146,6 +146,16 @@
         // This works because timeToMinutes handles the wrap-around (e.g., 00:10 becomes 1450)
         return selectedTime >= startMinutes && selectedTime < endMinutes;
     });
+    
+    filteredPerformances = performancesAtTime;
+    
+    // If hideEmptyStages is true, only include stages that have performances
+    if (hideEmptyStages) {
+      const stagesWithPerformances = performancesAtTime.map(p => p.stage);
+      stages = stagesForDay.filter(stage => stagesWithPerformances.includes(stage));
+    } else {
+      stages = stagesForDay; // Show all stages
+    }
   }
 
   // Sort all performances chronologically across all days
@@ -374,6 +384,17 @@
         />
         <button class="reset-button" on:click={resetTimeToDefault}>Reset Time</button>
       </div>
+    </div>
+    
+    <div class="toggle-container">
+      <label for="hide-empty" class="toggle-label">
+        <input 
+          type="checkbox" 
+          id="hide-empty" 
+          bind:checked={hideEmptyStages}
+        />
+        <span class="toggle-text">Hide empty stages</span>
+      </label>
     </div>
   </div>
 
@@ -835,6 +856,36 @@
     transform: scale(1.3);
   }
 
+  /* Toggle switch styling */
+  .toggle-container {
+    background-color: var(--card-background);
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    display: flex;
+    align-items: center;
+  }
+
+  .toggle-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    margin-bottom: 0;
+  }
+
+  .toggle-label input[type="checkbox"] {
+    margin-right: 0.8rem;
+    cursor: pointer;
+    height: 18px;
+    width: 18px;
+    accent-color: var(--primary-color);
+  }
+
+  .toggle-text {
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+
   /* Responsive adjustments */
   @media (max-width: 768px) {
     .controls {
@@ -851,6 +902,10 @@
     
     .performance-details {
       width: 100%;
+    }
+    
+    .toggle-container {
+      grid-column: 1 / -1; /* Make it full width on mobile */
     }
   }
 
