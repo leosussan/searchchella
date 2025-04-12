@@ -642,24 +642,33 @@
   }
 
   .schedule-grid li span {
-    font-size: 1.05rem;
+    font-size: 1rem; /* Slightly smaller than current 1.05rem */
     font-weight: 500;
+    line-height: 1.5;
+    letter-spacing: 0.01em; /* Slightly increase letter spacing */
     color: var(--text-color);
-    line-height: 1.4;
+  }
+
+  /* Add a subtle text shadow in dark mode only */
+  :root[data-theme="dark"] .schedule-grid li span {
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
   }
 
   /* Add this to enhance the artist name visibility */
   .artist-name {
-    font-weight: 600;
+    font-weight: 500; /* Reduce from 600 to 500 for less harshness */
     display: inline-block;
     margin-right: 0.3rem;
+    color: var(--text-color);
+    opacity: 0.9; /* Slightly reduce opacity for softer appearance */
   }
 
   /* Add this to style the performance times */
   .performance-time {
     color: var(--primary-color);
-    font-weight: 500;
+    font-weight: 400; /* Reduce from 500 to 400 */
     white-space: nowrap;
+    opacity: 0.85; /* Slightly reduce opacity */
   }
 
   .stage-name {
