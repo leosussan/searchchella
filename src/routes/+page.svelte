@@ -26,6 +26,7 @@
   /** @type {typeof scheduleData} */
   let chronologicalPerformances = [];
   let hideEmptyStages = false; // Default to showing all stages
+  let hideNoStreamStages = false; // Default to showing all stages including those without livestreams
 
   const festivalTimeZone = 'America/Los_Angeles'; // Coachella timezone
   let selectedTimezone = ''; // Will be set to user's timezone in onMount
@@ -149,13 +150,33 @@
     
     filteredPerformances = performancesAtTime;
     
+    // Apply filters to stages
+    let filteredStages = stagesForDay;
+    
     // If hideEmptyStages is true, only include stages that have performances
     if (hideEmptyStages) {
       const stagesWithPerformances = performancesAtTime.map(p => p.stage);
-      stages = stagesForDay.filter(stage => stagesWithPerformances.includes(stage));
-    } else {
-      stages = stagesForDay; // Show all stages
+      filteredStages = filteredStages.filter(stage => stagesWithPerformances.includes(stage));
     }
+    
+    // If hideNoStreamStages is true, hide stages without livestreams and before 16:00 Pacific
+    if (hideNoStreamStages) {
+      // Hide Yuma stage completely (no livestream)
+      filteredStages = filteredStages.filter(stage => stage !== 'Yuma');
+      
+      // Hide all stages before 16:00 Pacific (960 minutes)
+      if (selectedTime < 960) {
+        filteredStages = [];
+      } else {
+        // Only keep stages with livestream links
+        filteredStages = filteredStages.filter(stage => {
+          const link = getLivestreamLink(stage);
+          return link !== undefined;
+        });
+      }
+    }
+    
+    stages = filteredStages;
   }
 
   // Sort all performances chronologically across all days
@@ -393,6 +414,15 @@
           bind:checked={hideEmptyStages}
         />
         <span class="toggle-text">Hide empty stages</span>
+      </label>
+      
+      <label for="hide-no-stream" class="toggle-label">
+        <input 
+          type="checkbox" 
+          id="hide-no-stream" 
+          bind:checked={hideNoStreamStages}
+        />
+        <span class="toggle-text">Hide stages without livestream</span>
       </label>
     </div>
   </div>
@@ -881,7 +911,8 @@
     border-radius: var(--border-radius);
     box-shadow: var(--box-shadow);
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    gap: 0.8rem;
   }
 
   .toggle-label {
