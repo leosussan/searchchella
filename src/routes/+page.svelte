@@ -223,16 +223,23 @@
       ? Math.round(currentTimeMinutesFestival / 5) * 5
       : 15 * 60;
 
-    // Set day based on current day
-    let currentDayIndexFestival = nowInFestivalTime.getDay();
-    if (currentHourFestival < 5) {
-      currentDayIndexFestival = (currentDayIndexFestival === 0) ? 6 : currentDayIndexFestival - 1;
+    // Get the day of week (0 = Sunday, 1 = Monday, ..., 6 = Saturday)
+    const dayOfWeek = nowInFestivalTime.getDay();
+    
+    // Get the hour to determine if we're in the early morning hours of the next day
+    const hour = nowInFestivalTime.getHours();
+    
+    // Default to Friday (festival day 1)
+    selectedDay = 'Friday';
+    
+    // If it's Saturday after 3:00 AM PT and before Sunday 3:00 AM PT, show Saturday
+    if ((dayOfWeek === 6 && hour >= 3) || (dayOfWeek === 0 && hour < 3)) {
+      selectedDay = 'Saturday';
     }
-
-    selectedDay = currentDayIndexFestival === 5 ? 'Friday' 
-                : currentDayIndexFestival === 6 ? 'Saturday'
-                : currentDayIndexFestival === 0 ? 'Sunday'
-                : 'Friday';
+    // If it's Sunday after 3:00 AM PT and before Monday 3:00 AM PT, show Sunday
+    else if ((dayOfWeek === 0 && hour >= 3) || (dayOfWeek === 1 && hour < 3)) {
+      selectedDay = 'Sunday';
+    }
   }
 
   onMount(() => {
