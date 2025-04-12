@@ -349,7 +349,7 @@
     
     /* Stage-specific colors - more subtle and less harsh on the eyes */
     --stage-coachella: #e63946;     /* Slightly muted red */
-    --stage-outdoor: #f9c74f;       /* Softer yellow/gold */
+    --stage-outdoor: #d4a72a;       /* Darker, more muted gold */
     --stage-sahara: #90be6d;        /* Softer green */
     --stage-mojave: #43a6c6;        /* Softer blue */
     --stage-gobi: #8d6a9f;          /* Softer purple */
