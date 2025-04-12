@@ -8,6 +8,9 @@
   function toggleTheme() {
     theme.update(current => current === 'light' ? 'dark' : 'light');
   }
+  
+  // Tab state
+  let activeTab = 'schedule'; // 'schedule' or 'list'
 
   /** @type {typeof scheduleData} */
   let schedule = scheduleData;
@@ -315,6 +318,28 @@
     </button>
   </div>
 
+  <!-- Tab navigation -->
+  <div class="tabs-container">
+    <button 
+      class="tab-button {activeTab === 'schedule' ? 'active' : ''}" 
+      on:click={() => activeTab = 'schedule'}
+      aria-selected={activeTab === 'schedule'}
+      role="tab"
+    >
+      Schedule View
+    </button>
+    <button 
+      class="tab-button {activeTab === 'list' ? 'active' : ''}" 
+      on:click={() => activeTab = 'list'}
+      aria-selected={activeTab === 'list'}
+      role="tab"
+    >
+      All Performances
+    </button>
+  </div>
+
+  <!-- Tab 1: Schedule View -->
+  {#if activeTab === 'schedule'}
   <div class="controls">
     <div class="day-selector">
       <label for="day">Day:</label>
@@ -389,10 +414,11 @@
       <p>No stages found for {selectedDay}.</p>
     {/if}
   </div>
+  {/if}
 
+  <!-- Tab 2: All Performances List -->
+  {#if activeTab === 'list'}
   <div class="acts-list-container">
-    <h2>All Performances</h2>
-    
     <div class="search-container">
       <input 
         type="text" 
@@ -439,6 +465,7 @@
       </div>
     {/if}
   </div>
+  {/if}
 
 </div>
 
@@ -814,9 +841,39 @@
     }
   }
 
+  /* Tab Styles */
+  .tabs-container {
+    display: flex;
+    margin-bottom: 2rem;
+    border-bottom: 2px solid var(--secondary-background);
+  }
+
+  .tab-button {
+    padding: 0.8rem 1.5rem;
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text-color);
+    cursor: pointer;
+    transition: var(--transition);
+    opacity: 0.7;
+  }
+
+  .tab-button:hover {
+    opacity: 1;
+    background-color: var(--secondary-background);
+  }
+
+  .tab-button.active {
+    border-bottom-color: var(--primary-color);
+    opacity: 1;
+    font-weight: 600;
+  }
+
   /* Acts List Styles */
   .acts-list-container {
-    margin-top: 3rem;
     background-color: var(--card-background);
     padding: 1.5rem;
     border-radius: var(--border-radius);
