@@ -2,6 +2,12 @@
   import scheduleData from '$lib/schedule.json';
   import { onMount } from 'svelte';
   import { formatInTimeZone, fromZonedTime, toZonedTime } from 'date-fns-tz'; // Corrected import
+  import { theme } from '$lib/stores';
+
+  // Toggle theme function
+  function toggleTheme() {
+    theme.update(current => current === 'light' ? 'dark' : 'light');
+  }
 
   /** @type {typeof scheduleData} */
   let schedule = scheduleData;
@@ -259,7 +265,30 @@
 </svelte:head>
 
 <div class="container">
-  <h1>Coachella 2025 Schedule</h1>
+  <div class="header-container">
+    <h1>Coachella 2025 Schedule</h1>
+    <button class="theme-toggle" on:click={toggleTheme} aria-label="Toggle dark mode">
+      {#if $theme === 'light'}
+        <!-- Sun icon for light mode -->
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="5"></circle>
+          <line x1="12" y1="1" x2="12" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="23"></line>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+          <line x1="1" y1="12" x2="3" y2="12"></line>
+          <line x1="21" y1="12" x2="23" y2="12"></line>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+      {:else}
+        <!-- Moon icon for dark mode -->
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+      {/if}
+    </button>
+  </div>
 
   <div class="controls">
     <div class="day-selector">
@@ -336,6 +365,7 @@
 </div>
 
 <style>
+  /* Add dark mode variables */
   :root {
     --primary-color: #3a86ff;
     --primary-light: #61a0ff;
@@ -346,6 +376,7 @@
     --border-radius: 8px;
     --box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     --transition: all 0.3s ease;
+    --secondary-background: #f5f5f5;
     
     /* Stage-specific colors - more subtle and less harsh on the eyes */
     --stage-coachella: #e63946;     /* Slightly muted red */
@@ -356,6 +387,58 @@
     --stage-sonora: #d66ba0;        /* Softer pink */
     --stage-yuma: #4cc9f0;          /* Softer teal */
     --stage-quasar: #f3a261;        /* Softer orange */
+  }
+
+  /* Dark mode variables */
+  html[data-theme="dark"] {
+    --primary-color: #4d8eff;
+    --primary-light: #75adff;
+    --primary-dark: #3a6bc7;
+    --text-color: #e0e0e0;
+    --background-color: #121212;
+    --card-background: #1e1e1e;
+    --box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    --secondary-background: #2a2a2a;
+    
+    /* Slightly brighter stage colors for dark mode */
+    --stage-coachella: #ff5a67;
+    --stage-outdoor: #ffc234;
+    --stage-sahara: #a5d68a;
+    --stage-mojave: #5bbfe0;
+    --stage-gobi: #a57fb9;
+    --stage-sonora: #f182b6;
+    --stage-yuma: #62d5fc;
+    --stage-quasar: #ffb57d;
+  }
+
+  /* Header container for title and theme toggle */
+  .header-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    margin-bottom: 1.5rem;
+  }
+
+  /* Theme toggle button */
+  .theme-toggle {
+    position: absolute;
+    right: 0;
+    background: none;
+    border: none;
+    color: var(--primary-color);
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+  }
+
+  .theme-toggle:hover {
+    background-color: rgba(58, 134, 255, 0.1);
+    transform: rotate(15deg);
   }
 
   .container {
@@ -507,7 +590,7 @@
     margin-bottom: 0;
     padding: 1rem;
     border: none;
-    background-color: #f5f5f5;
+    background-color: var(--secondary-background);
     border-radius: var(--border-radius);
     display: flex;
     flex-direction: column;
