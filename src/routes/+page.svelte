@@ -599,11 +599,30 @@
     align-items: start;
   }
 
-  .day-selector, .timezone-selector, .time-selector {
+  .day-selector, .time-selector {
     background-color: var(--card-background);
     padding: 1rem;
     border-radius: var(--border-radius);
     box-shadow: var(--box-shadow);
+  }
+
+  /* Add these new styles for the combined time and timezone selector */
+  .time-label-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+  }
+
+  .timezone-inline-selector {
+    margin-left: 0.5rem;
+  }
+
+  .timezone-inline-selector select {
+    padding: 0.3rem 0.5rem;
+    font-size: 0.85rem;
+    width: auto;
+    min-width: 120px;
   }
 
   .time-controls {
