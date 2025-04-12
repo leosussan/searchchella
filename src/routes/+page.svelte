@@ -223,10 +223,32 @@
   }
 
   /**
-   * Resets the time slider to the default value (3:00 PM Pacific)
+   * Resets the time slider based on current time, using the same logic as initial load
    */
   function resetTimeToDefault() {
-    selectedTime = 15 * 60; // Reset to 3:00 PM Pacific (default)
+    // Get current time in festival timezone
+    const now = new Date();
+    const nowInFestivalTime = toZonedTime(now, festivalTimeZone);
+    const currentHourFestival = nowInFestivalTime.getHours();
+    const currentMinuteFestival = nowInFestivalTime.getMinutes();
+    let currentTimeMinutesFestival = currentHourFestival * 60 + currentMinuteFestival;
+
+    // Adjust for 'next day' if current time is past midnight festival time
+    if (currentHourFestival < 5) { // Treat early morning as part of previous day's schedule
+      currentTimeMinutesFestival += 24 * 60;
+    }
+
+    // Define slider range (Festival Time)
+    const sliderMin = 12 * 60; // 12:00 PM
+    const sliderMax = (24 + 2) * 60; // Extend to 2:00 AM (26 * 60 = 1560)
+
+    if (currentTimeMinutesFestival >= sliderMin && currentTimeMinutesFestival <= sliderMax) {
+      // Set slider to current time, rounded to nearest 5 minutes
+      selectedTime = Math.round(currentTimeMinutesFestival / 5) * 5;
+    } else {
+      // Use default if current time is outside typical hours
+      selectedTime = 15 * 60; // 3:00 PM Pacific
+    }
   }
 
 </script>
