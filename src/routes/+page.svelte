@@ -25,7 +25,7 @@
   let searchTerm = '';
   /** @type {typeof scheduleData} */
   let chronologicalPerformances = [];
-  let hideEmptyStages = false; // Default to showing all stages
+  let hideEmptyStages = true; // Default to hiding empty stages
   let hideNoStreamStages = false; // Default to showing all stages including those without livestreams
 
   const festivalTimeZone = 'America/Los_Angeles'; // Coachella timezone
