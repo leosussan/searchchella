@@ -307,7 +307,7 @@
         {#each stages as stage}
           {@const performance = filteredPerformances.find(p => p.stage === stage)}
           {@const liveLink = getLivestreamLink(stage)}
-          <li>
+          <li data-stage={stage}>
             <strong class="stage-name">
               {stage}
               {#if liveLink}
@@ -337,15 +337,25 @@
 
 <style>
   :root {
-    --primary-color: #6200ea;
-    --primary-light: #9d46ff;
-    --primary-dark: #0a00b6;
+    --primary-color: #3a86ff;
+    --primary-light: #61a0ff;
+    --primary-dark: #2667cc;
     --text-color: #333;
     --background-color: #f9f9f9;
     --card-background: #ffffff;
     --border-radius: 8px;
     --box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     --transition: all 0.3s ease;
+    
+    /* Stage-specific colors */
+    --stage-coachella: #ff595e;
+    --stage-outdoor: #ffca3a;
+    --stage-sahara: #8ac926;
+    --stage-mojave: #1982c4;
+    --stage-gobi: #6a4c93;
+    --stage-sonora: #f15bb5;
+    --stage-yuma: #00b4d8;
+    --stage-quasar: #fb8500;
   }
 
   .container {
@@ -458,7 +468,7 @@
     margin-bottom: 0.5rem;
     font-size: 0.95rem;
     font-weight: 600;
-    color: var(--primary-dark);
+    color: var(--text-color);
   }
 
   select {
@@ -475,7 +485,7 @@
   select:focus {
     border-color: var(--primary-color);
     outline: none;
-    box-shadow: 0 0 0 2px rgba(98, 0, 234, 0.2);
+    box-shadow: 0 0 0 2px rgba(58, 134, 255, 0.2);
   }
 
   .schedule-grid {
@@ -503,6 +513,40 @@
     flex-direction: column;
     gap: 0.5rem;
     transition: var(--transition);
+    border-top: 4px solid #ccc; /* Default border color */
+  }
+
+  /* Stage-specific styling */
+  .schedule-grid li[data-stage="Coachella Stage"] {
+    border-top-color: var(--stage-coachella);
+  }
+
+  .schedule-grid li[data-stage="Outdoor Theatre"] {
+    border-top-color: var(--stage-outdoor);
+  }
+
+  .schedule-grid li[data-stage="Sahara"] {
+    border-top-color: var(--stage-sahara);
+  }
+
+  .schedule-grid li[data-stage="Mojave"] {
+    border-top-color: var(--stage-mojave);
+  }
+
+  .schedule-grid li[data-stage="Gobi"] {
+    border-top-color: var(--stage-gobi);
+  }
+
+  .schedule-grid li[data-stage="Sonora"] {
+    border-top-color: var(--stage-sonora);
+  }
+
+  .schedule-grid li[data-stage="Yuma"] {
+    border-top-color: var(--stage-yuma);
+  }
+
+  .schedule-grid li[data-stage="Quasar"] {
+    border-top-color: var(--stage-quasar);
   }
 
   .schedule-grid li:hover {
@@ -515,8 +559,41 @@
     align-items: center;
     gap: 0.5rem;
     font-size: 1.1rem;
-    color: var(--primary-color);
+    color: var(--text-color);
     margin-bottom: 0.3rem;
+  }
+
+  /* Stage-specific text colors */
+  li[data-stage="Coachella Stage"] .stage-name {
+    color: var(--stage-coachella);
+  }
+
+  li[data-stage="Outdoor Theatre"] .stage-name {
+    color: var(--stage-outdoor);
+  }
+
+  li[data-stage="Sahara"] .stage-name {
+    color: var(--stage-sahara);
+  }
+
+  li[data-stage="Mojave"] .stage-name {
+    color: var(--stage-mojave);
+  }
+
+  li[data-stage="Gobi"] .stage-name {
+    color: var(--stage-gobi);
+  }
+
+  li[data-stage="Sonora"] .stage-name {
+    color: var(--stage-sonora);
+  }
+
+  li[data-stage="Yuma"] .stage-name {
+    color: var(--stage-yuma);
+  }
+
+  li[data-stage="Quasar"] .stage-name {
+    color: var(--stage-quasar);
   }
 
   .livestream-link svg {
