@@ -985,11 +985,15 @@
     padding: 1.5rem;
     border-radius: var(--border-radius);
     box-shadow: var(--box-shadow);
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .search-container {
     position: relative;
     margin-bottom: 1.5rem;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .search-container input {
@@ -1001,6 +1005,7 @@
     background-color: var(--card-background);
     color: var(--text-color);
     transition: var(--transition);
+    box-sizing: border-box; /* Add this to include padding in width calculation */
   }
 
   .search-container input:focus {
