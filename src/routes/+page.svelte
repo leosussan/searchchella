@@ -1041,19 +1041,20 @@
   /* Responsive adjustments for acts list */
   @media (max-width: 768px) {
     .act-item {
-      flex-direction: column;
+      flex-direction: row; /* Explicitly set to row instead of column */
       justify-content: space-between;
+      align-items: flex-start; /* Align items to the top */
       gap: 0.8rem;
     }
     
     .act-day-time {
-      order: 2; /* Move to the right */
       align-items: flex-end; /* Right-align the content */
+      text-align: right; /* Ensure text is right-aligned */
     }
     
     .act-details {
-      order: 1; /* Move to the left */
       align-items: flex-start; /* Left-align the content */
+      text-align: left; /* Ensure text is left-aligned */
       width: auto; /* Remove full width */
     }
   }
