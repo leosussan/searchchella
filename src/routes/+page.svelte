@@ -347,15 +347,15 @@
     --box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     --transition: all 0.3s ease;
     
-    /* Stage-specific colors */
-    --stage-coachella: #ff595e;
-    --stage-outdoor: #ffca3a;
-    --stage-sahara: #8ac926;
-    --stage-mojave: #1982c4;
-    --stage-gobi: #6a4c93;
-    --stage-sonora: #f15bb5;
-    --stage-yuma: #00b4d8;
-    --stage-quasar: #fb8500;
+    /* Stage-specific colors - more subtle and less harsh on the eyes */
+    --stage-coachella: #e63946;     /* Slightly muted red */
+    --stage-outdoor: #f9c74f;       /* Softer yellow/gold */
+    --stage-sahara: #90be6d;        /* Softer green */
+    --stage-mojave: #43a6c6;        /* Softer blue */
+    --stage-gobi: #8d6a9f;          /* Softer purple */
+    --stage-sonora: #d66ba0;        /* Softer pink */
+    --stage-yuma: #4cc9f0;          /* Softer teal */
+    --stage-quasar: #f3a261;        /* Softer orange */
   }
 
   .container {
