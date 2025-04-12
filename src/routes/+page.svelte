@@ -744,14 +744,6 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
 
-  .schedule-grid li span {
-    font-size: 1rem; /* Slightly smaller than current 1.05rem */
-    font-weight: 500;
-    line-height: 1.5;
-    letter-spacing: 0.01em; /* Slightly increase letter spacing */
-    color: var(--text-color);
-  }
-
   /* Add a subtle text shadow in dark mode only */
   :root[data-theme="dark"] .schedule-grid li span {
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
@@ -782,17 +774,18 @@
     gap: 0.5rem;
     font-size: 1.1rem;
     color: var(--text-color);
+    font-weight: 500;
   }
 
   /* Make sure the artist name styling is consistent across both views */
-  .act-artist, .artist-name {
+  .act-artist {
     font-weight: 600;
     font-size: 1.05rem;
     color: var(--text-color);
   }
 
   /* Make sure the time styling is consistent across both views */
-  .act-time, .performance-time {
+  .act-time {
     font-size: 0.85rem;
     color: var(--text-color);
     opacity: 0.8;
