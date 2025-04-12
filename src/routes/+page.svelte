@@ -387,24 +387,25 @@
           {@const performance = filteredPerformances.find(p => p.stage === stage)}
           {@const liveLink = getLivestreamLink(stage)}
           <li data-stage={stage}>
-            <strong class="stage-name">
-              {stage}
-              {#if liveLink}
-                <a href="https://www.youtube.com/watch?v={liveLink}" target="_blank" title="Watch Livestream for {stage} on {selectedDay}" class="livestream-link" aria-label="Watch Livestream for {stage} on {selectedDay}">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
-                    <path fill-rule="evenodd" d="M4.5 5.653c0-1.427 1.529-2.33 2.779-1.643l11.54 6.347c1.295.712 1.295 2.573 0 3.286L7.28 19.99c-1.25.687-2.779-.217-2.779-1.643V5.653Z" clip-rule="evenodd" />
-                  </svg>
-                </a>
-              {/if}
-            </strong>
+            <div class="stage-name-container">
+              <strong class="stage-name">
+                {stage}
+                {#if liveLink}
+                  <a href="https://www.youtube.com/watch?v={liveLink}" target="_blank" title="Watch Livestream for {stage} on {selectedDay}" class="livestream-link" aria-label="Watch Livestream for {stage} on {selectedDay}">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+                      <path fill-rule="evenodd" d="M4.5 5.653c0-1.427 1.529-2.33 2.779-1.643l11.54 6.347c1.295.712 1.295 2.573 0 3.286L7.28 19.99c-1.25.687-2.779-.217-2.779-1.643V5.653Z" clip-rule="evenodd" />
+                    </svg>
+                  </a>
+                {/if}
+              </strong>
+            </div>
             {#if performance}
-               <!-- Display performance times in selected timezone -->
-              <span>
-                <span class="artist-name">{performance.artist}</span>
-                <span class="performance-time">({formatPerformanceTime(performance.start)} - {formatPerformanceTime(performance.end)})</span>
-              </span>
+              <div class="performance-details">
+                <span class="act-artist">{performance.artist}</span>
+                <span class="act-time">{formatPerformanceTime(performance.start)} - {formatPerformanceTime(performance.end)}</span>
+              </div>
             {:else}
-              <span>-</span>
+              <span class="no-performance">No performance at this time</span>
             {/if}
           </li>
         {/each}
@@ -702,45 +703,45 @@
     flex-direction: column;
     gap: 0.5rem;
     transition: var(--transition);
-    border-top: 4px solid #ccc; /* Default border color */
+    border-left: 4px solid #ccc; /* Changed from border-top to border-left to match act-item */
   }
 
   /* Stage-specific styling */
   .schedule-grid li[data-stage="Coachella Stage"] {
-    border-top-color: var(--stage-coachella);
+    border-left-color: var(--stage-coachella);
   }
 
   .schedule-grid li[data-stage="Outdoor Theatre"] {
-    border-top-color: var(--stage-outdoor);
+    border-left-color: var(--stage-outdoor);
   }
 
   .schedule-grid li[data-stage="Sahara"] {
-    border-top-color: var(--stage-sahara);
+    border-left-color: var(--stage-sahara);
   }
 
   .schedule-grid li[data-stage="Mojave"] {
-    border-top-color: var(--stage-mojave);
+    border-left-color: var(--stage-mojave);
   }
 
   .schedule-grid li[data-stage="Gobi"] {
-    border-top-color: var(--stage-gobi);
+    border-left-color: var(--stage-gobi);
   }
 
   .schedule-grid li[data-stage="Sonora"] {
-    border-top-color: var(--stage-sonora);
+    border-left-color: var(--stage-sonora);
   }
 
   .schedule-grid li[data-stage="Yuma"] {
-    border-top-color: var(--stage-yuma);
+    border-left-color: var(--stage-yuma);
   }
 
   .schedule-grid li[data-stage="Quasar"] {
-    border-top-color: var(--stage-quasar);
+    border-left-color: var(--stage-quasar);
   }
 
   .schedule-grid li:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateX(3px); /* Changed from translateY to translateX to match act-item */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
 
   .schedule-grid li span {
@@ -757,29 +758,44 @@
   }
 
   /* Add this to enhance the artist name visibility */
-  .artist-name {
-    font-weight: 500; /* Reduce from 600 to 500 for less harshness */
-    display: inline-block;
-    margin-right: 0.3rem;
+  /* Add these new styles for the updated schedule grid */
+  .stage-name-container {
+    margin-bottom: 0.3rem;
+  }
+
+  .performance-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .no-performance {
     color: var(--text-color);
-    opacity: 0.9; /* Slightly reduce opacity for softer appearance */
+    opacity: 0.6;
+    font-style: italic;
   }
 
-  /* Add this to style the performance times */
-  .performance-time {
-    color: var(--primary-color);
-    font-weight: 400; /* Reduce from 500 to 400 */
-    white-space: nowrap;
-    opacity: 0.85; /* Slightly reduce opacity */
-  }
-
-  .stage-name {
+  /* Update these existing styles to be shared between both views */
+  .stage-name, .act-stage {
     display: flex;
     align-items: center;
     gap: 0.5rem;
     font-size: 1.1rem;
     color: var(--text-color);
-    margin-bottom: 0.3rem;
+  }
+
+  /* Make sure the artist name styling is consistent across both views */
+  .act-artist, .artist-name {
+    font-weight: 600;
+    font-size: 1.05rem;
+    color: var(--text-color);
+  }
+
+  /* Make sure the time styling is consistent across both views */
+  .act-time, .performance-time {
+    font-size: 0.85rem;
+    color: var(--text-color);
+    opacity: 0.8;
   }
 
   /* Stage-specific text colors */
@@ -838,6 +854,10 @@
     
     h1 {
       font-size: 1.8rem;
+    }
+    
+    .performance-details {
+      width: 100%;
     }
   }
 
