@@ -444,10 +444,6 @@
         {#each filteredChronologicalPerformances as performance}
           {@const liveLink = getLivestreamLink(performance.stage)}
           <div class="act-item" data-stage={performance.stage}>
-            <div class="act-day-time">
-              <span class="act-day">{performance.day}</span>
-              <span class="act-time">{formatPerformanceTime(performance.start)} - {formatPerformanceTime(performance.end)}</span>
-            </div>
             <div class="act-details">
               <span class="act-artist">{performance.artist}</span>
               <span class="act-stage">
@@ -460,6 +456,10 @@
                   </a>
                 {/if}
               </span>
+            </div>
+            <div class="act-day-time">
+              <span class="act-day">{performance.day}</span>
+              <span class="act-time">{formatPerformanceTime(performance.start)} - {formatPerformanceTime(performance.end)}</span>
             </div>
           </div>
         {/each}
@@ -1002,6 +1002,7 @@
     display: flex;
     flex-direction: column;
     gap: 0.3rem;
+    align-items: flex-end; /* Align to the right side */
   }
 
   .act-day {
@@ -1019,7 +1020,7 @@
   .act-details {
     display: flex;
     flex-direction: column;
-    align-items: flex-end;
+    align-items: flex-start; /* Align to the left side */
     gap: 0.3rem;
   }
 
@@ -1041,13 +1042,19 @@
   @media (max-width: 768px) {
     .act-item {
       flex-direction: column;
-      align-items: flex-start;
+      justify-content: space-between;
       gap: 0.8rem;
     }
     
+    .act-day-time {
+      order: 2; /* Move to the right */
+      align-items: flex-end; /* Right-align the content */
+    }
+    
     .act-details {
-      align-items: flex-start;
-      width: 100%;
+      order: 1; /* Move to the left */
+      align-items: flex-start; /* Left-align the content */
+      width: auto; /* Remove full width */
     }
   }
 </style>
