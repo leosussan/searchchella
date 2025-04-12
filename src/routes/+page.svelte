@@ -360,18 +360,17 @@
       </select>
     </div>
 
-     <div class="timezone-selector">
-      <label for="timezone">Timezone:</label>
-      <select bind:value={selectedTimezone} id="timezone">
-        {#each availableTimezones as tz}
-          <option value={tz.value}>{tz.label}</option>
-        {/each}
-      </select>
-    </div>
-
     <div class="time-selector">
-       <!-- Display time in selected timezone -->
-      <label for="time">Time: {formatSliderTime(selectedTime)}</label>
+      <div class="time-label-container">
+        <label for="time">Time: {formatSliderTime(selectedTime)}</label>
+        <div class="timezone-inline-selector">
+          <select bind:value={selectedTimezone} id="timezone" aria-label="Select timezone">
+            {#each availableTimezones as tz}
+              <option value={tz.value}>{tz.label}</option>
+            {/each}
+          </select>
+        </div>
+      </div>
       <div class="time-controls">
         <!-- Time slider from 12 PM (720 min) to 2:00 AM (1560 min -> 26 * 60) festival time -->
         <input
@@ -906,6 +905,24 @@
     
     .toggle-container {
       grid-column: 1 / -1; /* Make it full width on mobile */
+    }
+  }
+  
+  /* Adjust for mobile */
+  @media (max-width: 480px) {
+    .time-label-container {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+    
+    .timezone-inline-selector {
+      margin-left: 0;
+      width: 100%;
+    }
+    
+    .timezone-inline-selector select {
+      width: 100%;
     }
   }
 
