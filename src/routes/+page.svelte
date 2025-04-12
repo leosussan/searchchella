@@ -349,7 +349,10 @@
             </strong>
             {#if performance}
                <!-- Display performance times in selected timezone -->
-              <span>{performance.artist} ({formatPerformanceTime(performance.start)} - {formatPerformanceTime(performance.end)})</span>
+              <span>
+                <span class="artist-name">{performance.artist}</span>
+                <span class="performance-time">({formatPerformanceTime(performance.start)} - {formatPerformanceTime(performance.end)})</span>
+              </span>
             {:else}
               <span>-</span>
             {/if}
@@ -636,6 +639,27 @@
   .schedule-grid li:hover {
     transform: translateY(-3px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .schedule-grid li span {
+    font-size: 1.05rem;
+    font-weight: 500;
+    color: var(--text-color);
+    line-height: 1.4;
+  }
+
+  /* Add this to enhance the artist name visibility */
+  .artist-name {
+    font-weight: 600;
+    display: inline-block;
+    margin-right: 0.3rem;
+  }
+
+  /* Add this to style the performance times */
+  .performance-time {
+    color: var(--primary-color);
+    font-weight: 500;
+    white-space: nowrap;
   }
 
   .stage-name {
