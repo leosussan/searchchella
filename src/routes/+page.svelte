@@ -336,83 +336,212 @@
 </div>
 
 <style>
+  :root {
+    --primary-color: #6200ea;
+    --primary-light: #9d46ff;
+    --primary-dark: #0a00b6;
+    --text-color: #333;
+    --background-color: #f9f9f9;
+    --card-background: #ffffff;
+    --border-radius: 8px;
+    --box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    --transition: all 0.3s ease;
+  }
+
   .container {
     max-width: 1200px;
     margin: 2rem auto;
-    padding: 1rem;
-    font-family: sans-serif;
+    padding: 1.5rem;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: var(--text-color);
+    background-color: var(--background-color);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
   }
+
+  h1 {
+    font-size: 2.2rem;
+    margin-bottom: 1.5rem;
+    color: var(--primary-color);
+    text-align: center;
+  }
+
+  h2 {
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+    color: var(--primary-dark);
+  }
+
   .controls {
     display: grid;
-    grid-template-columns: auto auto 1fr; /* Adjust columns for timezone selector */
-    gap: 1.5rem; /* Adjust gap */
-    margin-bottom: 2rem;
-    align-items: center;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+    align-items: start;
   }
-  .time-selector {
-    /* flex-grow: 1; */ /* No longer needed with grid */
+
+  .day-selector, .timezone-selector, .time-selector {
+    background-color: var(--card-background);
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
   }
+
   .time-controls {
     display: flex;
     align-items: center;
     gap: 1rem;
     width: 100%;
-    margin-top: 0.5rem;
+    margin-top: 0.8rem;
   }
 
   .time-controls input[type="range"] {
     flex-grow: 1;
+    height: 6px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: #ddd;
+    border-radius: 3px;
+    outline: none;
+  }
+
+  .time-controls input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: var(--transition);
+  }
+
+  .time-controls input[type="range"]::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
+    transition: var(--transition);
+  }
+
+  .time-controls input[type="range"]::-webkit-slider-thumb:hover {
+    background: var(--primary-light);
+    transform: scale(1.1);
+  }
+
+  .time-controls input[type="range"]::-moz-range-thumb:hover {
+    background: var(--primary-light);
+    transform: scale(1.1);
   }
 
   .reset-button {
-    padding: 0.3rem 0.6rem;
-    background-color: #f0f0f0;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    padding: 0.5rem 0.8rem;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: var(--border-radius);
     cursor: pointer;
-    font-size: 0.8rem;
+    font-size: 0.9rem;
     white-space: nowrap;
+    transition: var(--transition);
   }
 
   .reset-button:hover {
-    background-color: #e0e0e0;
+    background-color: var(--primary-light);
+    transform: translateY(-2px);
   }
+
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--primary-dark);
+  }
+
+  select {
+    width: 100%;
+    padding: 0.6rem 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    background-color: white;
+    transition: var(--transition);
+    cursor: pointer;
+  }
+
+  select:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(98, 0, 234, 0.2);
+  }
+
+  .schedule-grid {
+    background-color: var(--card-background);
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+  }
+
   .schedule-grid ul {
     list-style: none;
     padding: 0;
-  }
-  .schedule-grid li {
-    margin-bottom: 0.5rem;
-    padding: 0.5rem;
-    border: 1px solid #eee;
-    border-radius: 4px;
-    display: flex; /* Align stage and artist info */
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 1rem;
-    align-items: center; /* Vertically align items */
   }
+
+  .schedule-grid li {
+    margin-bottom: 0;
+    padding: 1rem;
+    border: none;
+    background-color: #f5f5f5;
+    border-radius: var(--border-radius);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    transition: var(--transition);
+  }
+
+  .schedule-grid li:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
   .stage-name {
-    display: inline-flex; /* Use inline-flex for alignment */
+    display: flex;
     align-items: center;
-    gap: 0.5rem; /* Space between name and icon */
-    width: 180px; /* Adjust width to accommodate icon */
-    flex-shrink: 0; /* Prevent stage name from shrinking */
+    gap: 0.5rem;
+    font-size: 1.1rem;
+    color: var(--primary-color);
+    margin-bottom: 0.3rem;
   }
+
   .livestream-link svg {
     display: inline-block;
     vertical-align: middle;
-    color: red;
+    color: #ff0000;
     transition: transform 0.2s ease-in-out;
   }
+
   .livestream-link:hover svg {
-      transform: scale(1.2);
+    transform: scale(1.3);
   }
-  label {
-      display: block;
-      margin-bottom: 0.25rem;
-      font-size: 0.9em;
-      font-weight: bold;
-  }
-  select {
-      padding: 0.3rem 0.5rem;
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .controls {
+      grid-template-columns: 1fr;
+    }
+    
+    .schedule-grid ul {
+      grid-template-columns: 1fr;
+    }
+    
+    h1 {
+      font-size: 1.8rem;
+    }
   }
 </style>
