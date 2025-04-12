@@ -1,11 +1,8 @@
 import { browser } from '$app/environment';
 import { writable } from 'svelte/store';
 
-// Initialize theme from localStorage or default to 'light'
-const initialTheme = browser && localStorage.getItem('theme') || 'light';
-
-// Create a writable store for the theme
-export const theme = writable(initialTheme);
+// Create a writable store with a more concise initialization
+export const theme = writable(browser ? localStorage.getItem('theme') || 'light' : 'light');
 
 // Subscribe to theme changes and update localStorage and document attributes
 if (browser) {

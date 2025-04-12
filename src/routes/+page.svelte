@@ -203,72 +203,66 @@
 
   // --- Initialization ---
 
-  onMount(() => {
-    // Detect user's timezone
-    try {
-        const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-        selectedTimezone = userTimezone;
-        // Update 'Local' option label
-        const localOption = availableTimezones.find(tz => tz.label === 'Local'); // Find by label initially
-        if (localOption) {
-            localOption.label = `Local (${userTimezone.split('/').pop()?.replace('_', ' ') || userTimezone})`;
-            localOption.value = userTimezone; // Set value so selection works
-            availableTimezones = [...availableTimezones]; // Trigger reactivity
-        }
-    } catch (e) {
-        console.error("Could not detect user timezone:", e);
-        selectedTimezone = festivalTimeZone; // Fallback to festival time
-        const localOption = availableTimezones.find(tz => tz.label === 'Local');
-         if (localOption) {
-            localOption.label = `Local (Unknown)`;
-            localOption.value = festivalTimeZone; // Fallback value
-            availableTimezones = [...availableTimezones];
-         }
-    }
-
-
-    // Set initial slider time based on current time
+  // Consolidate time initialization into a single function
+  function setInitialTimeAndDay() {
     const now = new Date();
-    const nowInFestivalTime = toZonedTime(now, festivalTimeZone); // Use corrected function name
+    const nowInFestivalTime = toZonedTime(now, festivalTimeZone);
     const currentHourFestival = nowInFestivalTime.getHours();
     const currentMinuteFestival = nowInFestivalTime.getMinutes();
     let currentTimeMinutesFestival = currentHourFestival * 60 + currentMinuteFestival;
 
-    // Adjust for 'next day' if current time is past midnight festival time
-     if (currentHourFestival < 5) { // Treat early morning as part of previous day's schedule
-       currentTimeMinutesFestival += 24 * 60;
-     }
-
-    // Define slider range (Festival Time)
-    const sliderMin = 12 * 60; // 12:00 PM
-    const sliderMax = (24 + 2) * 60; // Extend to 2:00 AM (26 * 60 = 1560)
-
-    if (currentTimeMinutesFestival >= sliderMin && currentTimeMinutesFestival <= sliderMax) {
-      // Set slider to current time, rounded to nearest 5 minutes
-      selectedTime = Math.round(currentTimeMinutesFestival / 5) * 5;
-    } else {
-      // Keep default if current time is outside typical hours
-      selectedTime = 15 * 60; // 3:00 PM Pacific
-    }
-
-    // Set selectedDay based on current day in festival time (adjusting for early morning)
-    let currentDayIndexFestival = nowInFestivalTime.getDay(); // Sunday=0, Monday=1... Saturday=6
-
-    // If it's early morning (before 5 AM), consider it the end of the *previous* day's schedule
+    // Adjust for early morning hours
     if (currentHourFestival < 5) {
-        currentDayIndexFestival = (currentDayIndexFestival === 0) ? 6 : currentDayIndexFestival - 1;
+      currentTimeMinutesFestival += 24 * 60;
     }
 
-    // Check if it's actually a festival day based on date (optional, but good practice)
-    // const festivalDates = ['2025-04-11', '2025-04-12', '2025-04-13']; // Example dates
-    // const currentFestivalDateStr = formatInTimeZone(nowInFestivalTime, festivalTimeZone, 'yyyy-MM-dd');
-    // if (festivalDates.includes(currentFestivalDateStr)) { ... }
+    // Set time based on current time or default
+    const sliderMin = 12 * 60;
+    const sliderMax = (24 + 2) * 60;
+    selectedTime = (currentTimeMinutesFestival >= sliderMin && currentTimeMinutesFestival <= sliderMax)
+      ? Math.round(currentTimeMinutesFestival / 5) * 5
+      : 15 * 60;
 
-    if (currentDayIndexFestival === 5) selectedDay = 'Friday'; // Friday
-    else if (currentDayIndexFestival === 6) selectedDay = 'Saturday'; // Saturday
-    else if (currentDayIndexFestival === 0) selectedDay = 'Sunday'; // Sunday
-    else selectedDay = 'Friday'; // Default if not a festival day (e.g., Monday)
+    // Set day based on current day
+    let currentDayIndexFestival = nowInFestivalTime.getDay();
+    if (currentHourFestival < 5) {
+      currentDayIndexFestival = (currentDayIndexFestival === 0) ? 6 : currentDayIndexFestival - 1;
+    }
 
+    selectedDay = currentDayIndexFestival === 5 ? 'Friday' 
+                : currentDayIndexFestival === 6 ? 'Saturday'
+                : currentDayIndexFestival === 0 ? 'Sunday'
+                : 'Friday';
+  }
+
+  onMount(() => {
+    // Detect user's timezone
+    try {
+      const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      selectedTimezone = userTimezone;
+      
+      const localOption = availableTimezones.find(tz => tz.label === 'Local');
+      if (localOption) {
+        localOption.label = `Local (${userTimezone.split('/').pop()?.replace('_', ' ') || userTimezone})`;
+        localOption.value = userTimezone;
+        availableTimezones = [...availableTimezones];
+      }
+      
+      // Set initial time and day in one place
+      setInitialTimeAndDay();
+    } catch (e) {
+      console.error("Could not detect user timezone:", e);
+      selectedTimezone = festivalTimeZone; // Fallback to festival time
+      const localOption = availableTimezones.find(tz => tz.label === 'Local');
+       if (localOption) {
+          localOption.label = `Local (Unknown)`;
+          localOption.value = festivalTimeZone; // Fallback value
+          availableTimezones = [...availableTimezones];
+       }
+       
+      // Still set initial time and day even if timezone detection fails
+      setInitialTimeAndDay();
+    }
   });
 
   /**
@@ -291,29 +285,7 @@
    * Resets the time slider based on current time, using the same logic as initial load
    */
   function resetTimeToDefault() {
-    // Get current time in festival timezone
-    const now = new Date();
-    const nowInFestivalTime = toZonedTime(now, festivalTimeZone);
-    const currentHourFestival = nowInFestivalTime.getHours();
-    const currentMinuteFestival = nowInFestivalTime.getMinutes();
-    let currentTimeMinutesFestival = currentHourFestival * 60 + currentMinuteFestival;
-
-    // Adjust for 'next day' if current time is past midnight festival time
-    if (currentHourFestival < 5) { // Treat early morning as part of previous day's schedule
-      currentTimeMinutesFestival += 24 * 60;
-    }
-
-    // Define slider range (Festival Time)
-    const sliderMin = 12 * 60; // 12:00 PM
-    const sliderMax = (24 + 2) * 60; // Extend to 2:00 AM (26 * 60 = 1560)
-
-    if (currentTimeMinutesFestival >= sliderMin && currentTimeMinutesFestival <= sliderMax) {
-      // Set slider to current time, rounded to nearest 5 minutes
-      selectedTime = Math.round(currentTimeMinutesFestival / 5) * 5;
-    } else {
-      // Use default if current time is outside typical hours
-      selectedTime = 15 * 60; // 3:00 PM Pacific
-    }
+    setInitialTimeAndDay();
   }
 
 </script>

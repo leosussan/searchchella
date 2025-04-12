@@ -4,12 +4,10 @@
 		<meta charset="utf-8" />
 		<link rel="icon" href="%sveltekit.assets%/favicon.png" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<!-- Inline script is fine for theme initialization to prevent flash -->
 		<script>
-			// Apply saved theme immediately to prevent flash of wrong theme
-			const savedTheme = localStorage.getItem('theme');
-			if (savedTheme) {
-				document.documentElement.setAttribute('data-theme', savedTheme);
-			}
+			document.documentElement.setAttribute('data-theme', 
+				localStorage.getItem('theme') || 'light');
 		</script>
 		%sveltekit.head%
 	</head>
